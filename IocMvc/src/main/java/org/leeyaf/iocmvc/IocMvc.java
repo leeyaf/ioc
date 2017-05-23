@@ -1,17 +1,14 @@
 package org.leeyaf.iocmvc;
 
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
@@ -31,6 +28,7 @@ public class IocMvc {
 		THIS.init(context);
 	}
 	public static void destory(){
+		logger.debug("destory IOCMVC...");
 		// help GC
 		THIS.instanceMap.clear();
 		THIS.mappingMap.clear();
@@ -63,20 +61,14 @@ public class IocMvc {
 	}
 	
 	/**
-	 * 初始化。扫描类，注入对象，创建url对于的method
+	 * 初始化。扫描类，注入对象，创建url对应的method
 	 */
 	private void init(ServletContext context){
 		try {
 			long time1=Calendar.getInstance().getTimeInMillis();
-			URL resource=this.getClass().getResource("/project.properties");
-			logger.debug("resource : "+resource.toString());
-			InputStream inputStream=resource.openStream();
-			Properties properties=new Properties();
-			properties.load(inputStream);
-			String packageName=(String) properties.get("iocmvc.scan.package");
-			inputStream.close();
+			logger.debug("starting IOCMVC...");
 			
-			List<Class<?>> allClasses=new ClassTemplate(packageName,context.getClassLoader()) {
+			List<Class<?>> allClasses=new ClassTemplate(context.getClassLoader()) {
 				@Override
 				public boolean checkAddClass(Class<?> c) {
 					return true;
